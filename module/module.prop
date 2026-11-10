@@ -1,6 +1,6 @@
-id=zygisk_mw_imgui
-name=Modern Warships ImGui Menu
-version=v1.0.0
-versionCode=100
+id=mw_zygisk_menu
+name=Modern Warships Zygisk Menu
+version=v1.0
+versionCode=1
 author=Developer
 description=Zygisk ImGui Menu for Modern Warships
