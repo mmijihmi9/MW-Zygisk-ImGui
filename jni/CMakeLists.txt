@@ -4,13 +4,20 @@ project(zygisk_mw_imgui CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# إعداد خيارات تجميع الأسمبلي لتفادي أخطاء Clang
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,-mcpu=all")
+
 include(FetchContent)
 
-# جلب الإصدار المستقر v1.2.6 من Dobby لتفادي أخطاء الأسمبلي
+# تعطيل بناء الاختبارات والمكاتب المشاركة لـ Dobby
+set(DOBBY_GENERATE_SHARED OFF CACHE BOOL "" FORCE)
+set(DOBBY_BUILD_TEST OFF CACHE BOOL "" FORCE)
+
+# جلب Dobby من الفرع الرئيسي الصحيح master
 FetchContent_Declare(
     dobby
     GIT_REPOSITORY https://github.com/jmpews/Dobby.git
-    GIT_TAG v1.2.6
+    GIT_TAG master
 )
 FetchContent_MakeAvailable(dobby)
 
