@@ -8,7 +8,7 @@
 #include <thread>
 #include <dlfcn.h>
 #include "zygisk.hpp"
-#include "shadowhook.h"
+#include "And64InlineHook.hpp"
 #include "imgui.h"
 #include "imgui_impl_android.h"
 #include "imgui_impl_opengl3.h"
@@ -85,7 +85,7 @@ EGLBoolean hooked_eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                 if (ImGui::BeginTabItem("Status")) {
                     ImGui::Text("Target: com.tbd.modernwarships");
                     ImGui::Text("Screen: %dx%d", g_Width, g_Height);
-                    ImGui::Text("Status: Hooked via Zygisk & ShadowHook");
+                    ImGui::Text("Status: Hooked via Zygisk & ARM64 InlineHook");
                     ImGui::EndTabItem();
                 }
                 ImGui::EndTabBar();
@@ -135,15 +135,22 @@ private:
 
     static void initHooks() {
         sleep(4);
-        shadowhook_init(SHADOWHOOK_MODE_UNIQUE, false);
 
-        // Hook Touch Input
-        shadowhook_hook_sym_name("libandroid.so", "AInputQueue_getEvent", 
-            (void*)hooked_AInputQueue_getEvent, (void**)&orig_AInputQueue_getEvent);
+        void *libandroid = dlopen("libandroid.so", RTLD_NOW);
+        if (libandroid) {
+            void *sym_input = dlsym(libandroid, "AInputQueue_getEvent");
+            if (sym_input) {
+                A64HookFunction(sym_input, (void*)hooked_AInputQueue_getEvent, (void**)&orig_AInputQueue_getEvent);
+            }
+        }
 
-        // Hook Render Loop
-        shadowhook_hook_sym_name("libEGL.so", "eglSwapBuffers", 
-            (void*)hooked_eglSwapBuffers, (void**)&orig_eglSwapBuffers);
+        void *libegl = dlopen("libEGL.so", RTLD_NOW);
+        if (libegl) {
+            void *sym_egl = dlsym(libegl, "eglSwapBuffers");
+            if (sym_egl) {
+                A64HookFunction(sym_egl, (void*)hooked_eglSwapBuffers, (void**)&orig_eglSwapBuffers);
+            }
+        }
     }
 };
 
