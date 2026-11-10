@@ -45,7 +45,7 @@ jobs:
 
           # الضغط من داخل مجلد pkg لضمان تواجد module.prop في الجذر المباشر
           cd pkg
-          zip -r ../ModernWarships-Zygisk-Menu.zip ./*
+          zip -r ../ModernWarships-Zygisk-Menu.zip .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
