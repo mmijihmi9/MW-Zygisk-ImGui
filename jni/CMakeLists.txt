@@ -6,11 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-# جلب مكتبة ShadowHook المعتمدة لأنظمة Android 14-16
+# جلب مكتبة ShadowHook من المستودع الرسمي الصحيح تحديداً
 FetchContent_Declare(
     shadowhook
-    GIT_REPOSITORY https://github.com/bytedance/shadowhook.git
-    GIT_TAG v1.0.10
+    GIT_REPOSITORY https://github.com/bytedance/android-inline-hook.git
+    GIT_TAG main
+    SOURCE_SUBDIR shadowhook
 )
 FetchContent_MakeAvailable(shadowhook)
 
