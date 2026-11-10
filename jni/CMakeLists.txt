@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-# تفعيل لغة ASM ضروري جداً لتجميع ملفات الأسمبلي الخاصة بـ ShadowHook
-enable_language(ASM)
+# تفعيل لغات C و C++ و ASM في بداية المشروع لتجميع ملفات الأسمبلي الخاصة بـ ShadowHook
 project(zygisk_mw_imgui CXX C ASM)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -9,9 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-# تفعيل بناء ShadowHook كمكتبة داخلية
-set(SHADOWHOOK_BUILD_STATIC ON CACHE BOOL "" FORCE)
-
+# جلب مكتبة ShadowHook وتحديد المجلد الفرعي
 FetchContent_Declare(
     shadowhook
     GIT_REPOSITORY https://github.com/bytedance/android-inline-hook.git
@@ -50,9 +47,9 @@ target_include_directories(zygisk_mw PRIVATE
     ${imgui_SOURCE_DIR}/backends
 )
 
-# الربط مع هدف shadowhook_static الناتج بعد تفعيل ASM
+# الربط مع هدف shadowhook الصحيح
 target_link_libraries(zygisk_mw
-    shadowhook_static
+    shadowhook
     ${log-lib}
     ${android-lib}
     ${egl-lib}
