@@ -27,12 +27,41 @@ jobs:
                 ../jni
           make -j$(nproc)
 
+      name: Build Modern Warships Zygisk Menu
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25c
+
+      - name: Build Native Library
+        run: |
+          mkdir -p build && cd build
+          cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+                -DANDROID_ABI=arm64-v8a \
+                -DANDROID_PLATFORM=android-30 \
+                ../jni
+          make -j$(nproc)
+
       - name: Create Module ZIP
         run: |
           mkdir -p zip_out/zygisk
           cp build/libzygisk_mw.so zip_out/zygisk/arm64-v8a.so
           cp -r module/* zip_out/
-          cd zip_out && zip -r ../ModernWarships-Zygisk-Menu.zip ./*
+          cd zip_out && zip -r ../ModernWarships-Zygisk-Menu.zip .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
