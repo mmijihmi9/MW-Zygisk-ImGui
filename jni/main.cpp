@@ -8,7 +8,7 @@
 #include <thread>
 #include <dlfcn.h>
 #include "zygisk.hpp"
-#include "dobby.h"
+#include "shadowhook.h"
 #include "imgui.h"
 #include "imgui_impl_android.h"
 #include "imgui_impl_opengl3.h"
@@ -85,7 +85,7 @@ EGLBoolean hooked_eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                 if (ImGui::BeginTabItem("Status")) {
                     ImGui::Text("Target: com.tbd.modernwarships");
                     ImGui::Text("Screen: %dx%d", g_Width, g_Height);
-                    ImGui::Text("Status: Hooked via Zygisk & Dobby");
+                    ImGui::Text("Status: Hooked via Zygisk & ShadowHook");
                     ImGui::EndTabItem();
                 }
                 ImGui::EndTabBar();
@@ -135,20 +135,15 @@ private:
 
     static void initHooks() {
         sleep(4);
-        void* android_lib = dlopen("libandroid.so", RTLD_NOW);
-        if (android_lib) {
-            void* getEvent_addr = dlsym(android_lib, "AInputQueue_getEvent");
-            if (getEvent_addr) {
-                DobbyHook(getEvent_addr, (dobby_dummy_func_t)hooked_AInputQueue_getEvent, (dobby_dummy_func_t*)&orig_AInputQueue_getEvent);
-            }
-        }
-        void* egl_lib = dlopen("libEGL.so", RTLD_NOW);
-        if (egl_lib) {
-            void* swap_addr = dlsym(egl_lib, "eglSwapBuffers");
-            if (swap_addr) {
-                DobbyHook(swap_addr, (dobby_dummy_func_t)hooked_eglSwapBuffers, (dobby_dummy_func_t*)&orig_eglSwapBuffers);
-            }
-        }
+        shadowhook_init(SHADOWHOOK_MODE_UNIQUE, false);
+
+        // Hook Touch Input
+        shadowhook_hook_sym_name("libandroid.so", "AInputQueue_getEvent", 
+            (void*)hooked_AInputQueue_getEvent, (void**)&orig_AInputQueue_getEvent);
+
+        // Hook Render Loop
+        shadowhook_hook_sym_name("libEGL.so", "eglSwapBuffers", 
+            (void*)hooked_eglSwapBuffers, (void**)&orig_eglSwapBuffers);
     }
 };
 
