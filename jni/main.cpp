@@ -147,4 +147,4 @@ private:
     }
 };
 
-REGISTER_ZYGISK_MODULE(ModernWarshipsModule)
+REGISTER_ZYGISK_MODULE(ModernWarshipsModule);
