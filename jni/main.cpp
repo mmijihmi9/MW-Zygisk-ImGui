@@ -65,7 +65,7 @@ EGLBoolean hooked_eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
     }
 
     // تحديث إدخال أندرويد (ضروري جداً لعمل اللمس وحجم الشاشة)
-    ImGui_ImplAndroid_NewFrame(g_Width, g_Height);
+    ImGui_ImplAndroid_NewFrame();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui::NewFrame();
 
