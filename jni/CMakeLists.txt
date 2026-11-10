@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-# تفعيل لغة ASM الضرورية لتجميع أكواد معالجات ARM64 في ShadowHook
+# تفعيل لغة ASM لبناء أكواد معالجات ARM64
 enable_language(ASM)
 project(zygisk_mw_imgui CXX C ASM)
 
@@ -9,12 +9,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-# جلب مكتبة ShadowHook مع تفعيل التنزيل المتفرع الكامل للمكتبات الفرعية (xdl)
+# تفعيل البناء الساكن (Static) لدمج ShadowHook بالكامل داخل مكتبة Zygisk
+set(SHADOWHOOK_BUILD_STATIC ON CACHE BOOL "" FORCE)
+set(SHADOWHOOK_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+
+# جلب مستودع android-inline-hook من الجذر لبناء xdl و shadowhook معا
 FetchContent_Declare(
     shadowhook
     GIT_REPOSITORY https://github.com/bytedance/android-inline-hook.git
     GIT_TAG main
-    SOURCE_SUBDIR shadowhook
     GIT_SUBMODULES_RECURSE TRUE
 )
 FetchContent_MakeAvailable(shadowhook)
@@ -49,9 +52,9 @@ target_include_directories(zygisk_mw PRIVATE
     ${imgui_SOURCE_DIR}/backends
 )
 
-# الربط التام مع هدف shadowhook الجاهز بعد اكتمال تنزيل المكونات
+# الربط الساكن المباشر مع shadowhook_static
 target_link_libraries(zygisk_mw
-    shadowhook
+    shadowhook_static
     ${log-lib}
     ${android-lib}
     ${egl-lib}
