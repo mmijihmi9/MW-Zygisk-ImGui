@@ -30,12 +30,22 @@ jobs:
                 ../jni
           make -j$(nproc)
 
-      - name: Create Module ZIP
+      - name: Package KernelSU Module
         run: |
-          mkdir -p zip_out/zygisk
-          cp build/libzygisk_mw.so zip_out/zygisk/arm64-v8a.so
-          if [ -d "module" ]; then cp -r module/* zip_out/; fi
-          cd zip_out && zip -r ../ModernWarships-Zygisk-Menu.zip *
+          # إنشاء مجلد البناء المؤقت
+          mkdir -p pkg/zygisk
+          
+          # نسخ المكتبة البرمجية إلى المسار المخصص للـ Zygisk
+          cp build/libzygisk_mw.so pkg/zygisk/arm64-v8a.so
+
+          # نسخ ملفات التوصيف الخارجي للموديول إلى الجذر مباشرة
+          if [ -d "module" ]; then
+            cp -r module/* pkg/
+          fi
+
+          # الضغط من داخل مجلد pkg لضمان تواجد module.prop في الجذر المباشر
+          cd pkg
+          zip -r ../ModernWarships-Zygisk-Menu.zip ./*
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
