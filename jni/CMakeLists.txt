@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
+# تعطيل المكونات المسببة لخطأ التجميع في NDK r25c
+set(DOBBY_GENERATE_SHARED OFF CACHE BOOL "" FORCE)
+set(DOBBY_BUILD_CLOSURE_TRAMPOLINE OFF CACHE BOOL "" FORCE)
+
+# جلب Dobby Hooking Framework
 FetchContent_Declare(
     dobby
     GIT_REPOSITORY https://github.com/jmpews/Dobby.git
@@ -13,6 +18,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(dobby)
 
+# جلب ImGui
 FetchContent_Declare(
     imgui
     GIT_REPOSITORY https://github.com/ocornut/imgui.git
