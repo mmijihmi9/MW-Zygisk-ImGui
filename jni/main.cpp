@@ -16,7 +16,8 @@
 #define LOG_TAG "MW_ZygiskMenu"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
-static const char* TARGET_PACKAGE = "com.tbd.modernwarships";
+// تصحيح اسم الحزمة الرسمي للعبة
+static const char* TARGET_PACKAGE = "com.shooter.modernwarship";
 static bool g_Initialized = false;
 static EGLint g_Width = 0;
 static EGLint g_Height = 0;
@@ -60,9 +61,11 @@ EGLBoolean hooked_eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
         ImGui::StyleColorsDark();
         ImGui_ImplOpenGL3_Init("#version 300 es");
         g_Initialized = true;
-        LOGI("ImGui Context & Touch Input initialized successfully.");
+        LOGI("ImGui Context initialized.");
     }
 
+    // تحديث إدخال أندرويد (ضروري جداً لعمل اللمس وحجم الشاشة)
+    ImGui_ImplAndroid_NewFrame(g_Width, g_Height);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui::NewFrame();
 
@@ -83,9 +86,9 @@ EGLBoolean hooked_eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                     ImGui::EndTabItem();
                 }
                 if (ImGui::BeginTabItem("Status")) {
-                    ImGui::Text("Target: com.tbd.modernwarships");
+                    ImGui::Text("Target: %s", TARGET_PACKAGE);
                     ImGui::Text("Screen: %dx%d", g_Width, g_Height);
-                    ImGui::Text("Status: Hooked via Zygisk & ARM64 InlineHook");
+                    ImGui::Text("Status: Hooked via Zygisk");
                     ImGui::EndTabItem();
                 }
                 ImGui::EndTabBar();
@@ -117,13 +120,14 @@ public:
             env->ReleaseStringUTFChars(args->nice_name, proc_name);
         }
         if (!is_target) {
+            // إلغاء تحميل الوحدة إذا لم تكن اللعبة المستهدفة
             api->setOption(zygisk::Option::DLCLOSE_MODULE_LIBRARY);
         }
     }
 
     void postAppSpecialize(const zygisk::AppSpecializeArgs *) override {
         if (is_target) {
-            LOGI("Modern Warships detected. Injecting hooks...");
+            LOGI("Modern Warships detected. Starting hooks...");
             std::thread(initHooks).detach();
         }
     }
@@ -134,7 +138,8 @@ private:
     bool is_target = false;
 
     static void initHooks() {
-        sleep(4);
+        // تقليل وقت الانتظار لتظهر القائمة أسرع
+        sleep(2);
 
         void *libandroid = dlopen("libandroid.so", RTLD_NOW);
         if (libandroid) {
