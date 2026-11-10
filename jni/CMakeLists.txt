@@ -4,7 +4,7 @@ project(zygisk_mw_imgui CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# تنزيل ملف zygisk.hpp المستقل والجاهز للبناء
+# تنزيل ملف zygisk.hpp المستقل والرسمي
 file(DOWNLOAD 
     "https://raw.githubusercontent.com/topjohnwu/zygisk-module-sample/main/module/jni/zygisk.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/zygisk.hpp"
@@ -44,8 +44,10 @@ add_library(zygisk_mw SHARED
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
+# إضافة مسار مساعدة المترجم للعثور على shadowhook.h و zygisk.hpp و imgui.h
 target_include_directories(zygisk_mw PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${shadowhook_SOURCE_DIR}/include
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
