@@ -4,22 +4,15 @@ project(zygisk_mw_imgui CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# إعداد خيارات تجميع الأسمبلي لتفادي أخطاء Clang
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,-mcpu=all")
-
 include(FetchContent)
 
-# تعطيل بناء الاختبارات والمكاتب المشاركة لـ Dobby
-set(DOBBY_GENERATE_SHARED OFF CACHE BOOL "" FORCE)
-set(DOBBY_BUILD_TEST OFF CACHE BOOL "" FORCE)
-
-# جلب Dobby من الفرع الرئيسي الصحيح master
+# جلب مكتبة ShadowHook المعتمدة لأنظمة Android 14-16
 FetchContent_Declare(
-    dobby
-    GIT_REPOSITORY https://github.com/jmpews/Dobby.git
-    GIT_TAG master
+    shadowhook
+    GIT_REPOSITORY https://github.com/bytedance/shadowhook.git
+    GIT_TAG v1.0.10
 )
-FetchContent_MakeAvailable(dobby)
+FetchContent_MakeAvailable(shadowhook)
 
 # جلب مكتبة ImGui
 FetchContent_Declare(
@@ -50,7 +43,7 @@ target_include_directories(zygisk_mw PRIVATE
 )
 
 target_link_libraries(zygisk_mw
-    dobby
+    shadowhook
     ${log-lib}
     ${android-lib}
     ${egl-lib}
