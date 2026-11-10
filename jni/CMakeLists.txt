@@ -4,9 +4,17 @@ project(zygisk_mw_imgui CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# تنزيل ملف zygisk.hpp الرسمي تلقائياً أثناء البناء إذا لم يكن موجوداً
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/zygisk.hpp")
+    file(DOWNLOAD 
+        "https://raw.githubusercontent.com/topjohnwu/Magisk/master/native/src/core/zygisk/zygisk.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/zygisk.hpp"
+    )
+endif()
+
 include(FetchContent)
 
-# جلب مكتبة ShadowHook من المستودع الرسمي الصحيح تحديداً
+# جلب مكتبة ShadowHook المستقرة
 FetchContent_Declare(
     shadowhook
     GIT_REPOSITORY https://github.com/bytedance/android-inline-hook.git
@@ -39,6 +47,7 @@ add_library(zygisk_mw SHARED
 )
 
 target_include_directories(zygisk_mw PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
