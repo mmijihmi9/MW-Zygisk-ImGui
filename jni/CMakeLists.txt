@@ -4,7 +4,7 @@ project(zygisk_mw_imgui CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# تنزيل ملف zygisk.hpp المستقل والرسمي من العينات المعتمدة
+# تنزيل ملف zygisk.hpp المستقل والجاهز للبناء
 file(DOWNLOAD 
     "https://raw.githubusercontent.com/topjohnwu/zygisk-module-sample/main/module/jni/zygisk.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/zygisk.hpp"
