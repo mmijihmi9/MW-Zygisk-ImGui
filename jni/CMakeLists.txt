@@ -6,11 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-# جلب مكتبة ShadowHook من المستودع الرئيسي مباشرة لإنشاء الهدف تلقائياً
+# جلب مكتبة ShadowHook وتحديد المجلد الفرعي لإنشاء هدف التجميع
 FetchContent_Declare(
     shadowhook
     GIT_REPOSITORY https://github.com/bytedance/android-inline-hook.git
     GIT_TAG main
+    SOURCE_SUBDIR shadowhook
 )
 FetchContent_MakeAvailable(shadowhook)
 
@@ -39,7 +40,6 @@ add_library(zygisk_mw SHARED
 
 target_include_directories(zygisk_mw PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${shadowhook_SOURCE_DIR}/shadowhook/src/main/cpp/include
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
