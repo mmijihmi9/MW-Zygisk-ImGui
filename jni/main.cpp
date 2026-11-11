@@ -17,7 +17,7 @@
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 // تصحيح اسم الحزمة الرسمي للعبة
-static const char* TARGET_PACKAGE = "com.Shooter.modernwarship";
+static const char* TARGET_PACKAGE = "com.Shooter.ModernWarship";
 static bool g_Initialized = false;
 static EGLint g_Width = 0;
 static EGLint g_Height = 0;
